@@ -1,0 +1,82 @@
+<html>
+    <head>
+<!--
+	/***********
+	 * OU TM352 Block 3, TMA03: index.html
+	 * 
+	 * To function correctly this file must be placed in a Cordova project and the appopriate plugins installed.
+	 * You need to complete the code which is commented with TODO.
+	 *
+	 * File created by Chris Thomson 11/10/2019 
+	 * File modified and submitted by: (your name here)
+	 ************/
+ --->
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+	    <meta http-equiv="Content-Security-Policy" content="">
+
+		<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css"/>
+		<script src="http://code.jquery.com/jquery-2.2.4.min.js"></script>
+		
+		<script type="text/javascript" src="cordova.js"></script>
+        <title>Taxi Sharing</title>
+    </head>
+    <body>
+    <div class="app" style="margin: 0 auto; text-align: center;">
+        <h1>Taxi Sharing</h1>
+        <div>
+		<!---
+			TODO: add text and form entry methods to capture relevant details
+		-->
+		<!-- I added some style to have the elements alligned to the center -->
+			<label for="oucu">Insert your <strong>OUCU</strong></label>
+			<input type="text" id="oucu" name="oucu" required minlength="4" maxlength="8" placeholder="e.g. ABC123" size="10"> 
+			<br /><hr />
+			<label for="starting-time" >Select starting date and start time</label>	
+			<input type="datetime-local" id="starting-time" name="starting-time" required> <br />
+			<br/>
+			<input type="number" name="hours" id="hours" min="0" max="24" />
+			<label for="hours">Waiting time in hours max 24h. e.g. </label>
+			<hr />
+			
+			<label for="destination">Select your Destination</label><br />
+			<div>
+				<select name="destination" id="destination">
+					<option value="">--Please choose a destination--</option>
+					<option value="Milton Keynes Central Station">Milton Keynes Central Station</option>
+					<option value="Open University campus">Open University campus</option>
+				</select>
+			</div>
+			<hr />
+
+
+        </div>
+        <div>
+		<!---
+			TODO: add buttons to allow the various functional requirements to be enacted
+		-->
+		<label for="register"><strong>New user</strong></label>
+		<button id="register" onclick="#">Register OUCU</button><hr />
+		<strong>Your trip</strong>
+		<button>offer to share</button> <button>request to share</button><button>update map</button>
+		<button>cancel request or offers</button><button>set map offline</button>
+
+		</div>
+		<!---
+			TODO: add a placeholder for the HERE map
+		-->
+		<div style="width: 90%; height: 35%; margin: 1rem auto 0; background-color: yellow" id="mapContainer"></div>
+         <!---
+			Background color added for display only, will be taken off in Question 2
+		-->
+    </div>
+  <script type="text/javascript" src="https://js.api.here.com/v3/3.0/mapsjs-core.js" charset="utf-8"></script>
+  <script type="text/javascript" src="https://js.api.here.com/v3/3.0/mapsjs-service.js" charset="utf-8"></script>
+  <script type="text/javascript" src="https://js.api.here.com/v3/3.0/mapsjs-mapevents.js" charset="utf-8"></script>
+  <script type="text/javascript" src="http://js.api.here.com/v3/3.0/mapsjs-ui.js" charset="utf-8"></script>
+  <script type="text/javascript" src="http://js.api.here.com/v3/3.0/mapsjs-pano.js" charset="utf-8"></script>
+  <link rel="stylesheet" type="text/css" href="http://js.api.here.com/v3/3.0/mapsjs-ui.css" />
+  <script type="text/javascript" src="js/index.js"></script>
+ </body>
+</html>
