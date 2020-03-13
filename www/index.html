@@ -23,29 +23,29 @@
         <title>Taxi Sharing</title>
     </head>
     <body>
+		<!-- I added some style to have the elements alligned to the center -->
     <div class="app" style="margin: 0 auto; text-align: center;">
         <h1>Taxi Sharing</h1>
         <div>
 		<!---
 			TODO: add text and form entry methods to capture relevant details
 		-->
-		<!-- I added some style to have the elements alligned to the center -->
-			<label for="oucu">Insert your <strong>OUCU</strong></label>
-			<input type="text" id="oucu" name="oucu" required minlength="4" maxlength="8" placeholder="e.g. ABC123" size="10"> 
+			<label for="name">Insert your <strong>OUCU</strong></label>
+			<input type="text" id="name" name="name" required minlength="4" maxlength="8" placeholder="e.g. ABC123" size="10"> 
 			<br /><hr />
-			<label for="starting-time" >Select starting date and start time</label>	
-			<input type="datetime-local" id="starting-time" name="starting-time" required> <br />
+			<label for="time" >Select starting date and start time</label>	
+			<input type="datetime-local" id="time" name="time" required> <br /><!-- changed ID and added required FR1.2 -->
 			<br/>
-			<input type="number" name="hours" id="hours" min="0" max="24" />
+			<input type="number" name="hours" id="hours" /><!-- modified the imput type -->
 			<label for="hours">Waiting time in hours max 24h. e.g. </label>
 			<hr />
 			
-			<label for="destination">Select your Destination</label><br />
+			<label for="addr">Select your pickup point</label><br />
 			<div>
-				<select name="destination" id="destination">
-					<option value="">--Please choose a destination--</option>
-					<option value="Milton Keynes Central Station">Milton Keynes Central Station</option>
-					<option value="Open University campus">Open University campus</option>
+				<select name="addr" id="addr" required>	<!-- changed ID and added required FR1.2 -->
+					<option value="">--Please choose your pick up point--</option>
+					<option value="Milton Keynes Central">Milton Keynes Central</option><!-- changed value FR1.2 -->
+					<option value="Open University">Open University</option><!-- changed value FR1.2 -->
 				</select>
 			</div>
 			<hr />
@@ -57,9 +57,9 @@
 			TODO: add buttons to allow the various functional requirements to be enacted
 		-->
 		<label for="register"><strong>New user</strong></label>
-	<button id="register" onclick="app.taxiShare.registerUser()">Register OUCU</button><hr /> <!-- add onclick that points to register user function -->
+	<button id="register" onclick="app.taxiShare.registerUser()">Register OUCU</button><hr /> <!-- added onclick that points to register user function -->
 		<strong>Your trip</strong>
-		<button>offer to share</button> <button>request to share</button><button>update map</button>
+		<button onclick="app.taxiShare.volunteerTaxi()">offer to share</button> <button>request to share</button><button>update map</button>
 		<button>cancel request or offers</button><button>set map offline</button>
 
 		</div>

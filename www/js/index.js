@@ -142,7 +142,7 @@ function formatDate(date, format, utc) {
  * @returns formatted Date string
  */
 function format(d) {
-  return formatDate(d, "yyyy:MM:dd:HH:mm");
+  return formatDate(d, "yyyy-MM-dd HH:mm"); //modified to comply with API insertion
 }
 
 /**
@@ -215,7 +215,23 @@ var app = {
 		function addMarkerToMap(address){
 			if (address != undefined) {
 				// TODO 2(a) FR2.2
-				
+				let mkAddr ={
+					"place_id": 236938815,
+					"licence": "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+					"boundingbox": [
+						"52.025307451225",
+						"52.025407451225",
+						"-0.70910266286612",
+						"-0.70900266286612"
+					],
+					"lat": "52.02535745122509",
+					"lon": "-0.7090526628661223",
+					"display_name": "Walton, Bow Brickhill, Milton Keynes, South East, England, MK7 6AA, United Kingdom",
+					"class": "place",
+					"type": "postcode",
+					"importance": 0.325
+				}
+				if (address=="Milton Keynes Central") markers.push({"lat": mkAddr.lat, "lon": mkAddr.lon})
 				// You need to implement this code, see the TMA infomation for an explanation
 				// of the fucntionality required.
 				
@@ -240,8 +256,8 @@ var app = {
 		function intialiseMap(){
 			// initialize the platform object:
 			var platform = new H.service.Platform({
-				app_id: "APP_ID", 	  // TODO: Change to your own APP_ID
-				app_code: "APP_CODE"  // TODO: Change to your own APP_CODE
+				app_id: "e2qq5RWEZXJplcqxyFUK", 	  // TODO: Change to your own APP_ID
+				app_code: "eWU8b7J1IC-9-GWLlod2ow"  // TODO: Change to your own APP_CODE
 			});
 			// obtain the default map types from the platform object
 			var defaultLayers = platform.createDefaultLayers();
@@ -342,6 +358,18 @@ var app = {
 			// TODO 2(a) FR1.2
 			// You need to implement this code, see the TMA infomation for an explanation
 			// of the fucntionality required.
+			if (oucu == "User1") return alert("please input a valid OUCU")
+			var uri = "http://137.108.92.9/openstack/taxi/orders"; 
+			var valueZero = 0; // used to select type : 0 
+			var propsApi = {OUCU: oucu, "start": start_time, type : valueZero , address : address, "end": end_time};
+		  	console.log(propsApi);
+			//$.post(uri, propsApi , getOrderId );
+			
+			
+			var getOrderId = function(data){
+							var result = data;
+							return alert(result);
+			}
 		}
 		
 		/**
@@ -424,7 +452,7 @@ var app = {
 			taxiShareObject.registerUser = function (){
 				//TODO adjust the following to get the OUCU from your HTML page.
 				//this function will be called once the user clicks on "register OUCU"
-				var oucu = get_name_value("oucu", "user1"); //added the "Register OUCU" button id tp the function 
+				var oucu = get_name_value("name", "user1");  
 				console.log("oucu:" + oucu);
 				register(oucu);
 			}
@@ -432,18 +460,27 @@ var app = {
 			//Indicate that the user wants to volunteer to share their taxi
 			taxiShareObject.volunteerTaxi = function (){
 				//TODO adjust the following to get the required data from your HTML page.
+				
+				//this function takes the value from an element
+				// var getElementFromDOM = function(id){
+				// 	var el = document.getElementById(id);
+				// 	return el.value.toString();
+				// }
+
 				var oucu = get_name_value("name", "user1");
 				var address = get_name_value("addr", "Open University"); 
-				var start_time = get_name_value("time", format(new Date()));
+				var start_time = get_name_value("time", format(new Date())).replace("T", " ").concat(":00"); // adds seconds exchanges T for space
 				var hours = get_name_value("hours", 1); //duration in hours
-				
 				// The API requires an end time, but the interface allows for duration.
 				// This code turns the duration into an end time.
 				var d = new Date();
 				d.setHours(d.getHours() + hours);
-				var end_time = format(d);
 				
-				volunteer(oucu,address,start_time,end_time);
+				var end_time = format(d).concat(":00");
+				//end time returns the default value of start time return a not compatible date format e.g. YYYY:MM:YY:HH:MM 
+				//I modified raw 145 and ad replace and concact so that the date format is YYYY-MM-DD HH:MM:00
+				
+				volunteer(oucu, address, start_time, end_time);
 			}
 			
 			//Indicate that the user wants to share a taxi somebody else has booked.
