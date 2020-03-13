@@ -231,7 +231,7 @@ var app = {
 					"type": "postcode",
 					"importance": 0.325
 				}
-				if (address=="Milton Keynes Central") markers.push({"lat": mkAddr.lat, "lon": mkAddr.lon})
+				if (address=="Milton Keynes Central") markers.push({coords:{"lat": mkAddr.lat, "lon": mkAddr.lon}})
 				// You need to implement this code, see the TMA infomation for an explanation
 				// of the fucntionality required.
 				
@@ -315,8 +315,24 @@ var app = {
 		 */
 		function updateMatchingStatus(address) {
 			// TODO 2(a) FR2.1
+			var uri = "http://137.108.92.9/openstack/taxi/matches";
+			//we clear the map from the old markers
+			clearMarkersFromMap()
+
+			var onSuccess = function(data){
+				arrayData = [];
+				var obj = $.parseJSON(data);
+				if(obj.status == "success")	alert("success");	
+			}
+
+			//we get the oucu and check if is valid
 			var oucu = get_name_value("name", "user1"); //TODO adjust to get the OUCU from your HTML page.
+			if (oucu == "" || oucu == "user1") return alert("OUCU has not been selected");
 			
+			var params = { OUCU: oucu } 
+			//we call the API to check orders and offers
+			$.get(uri, params, onSuccess );
+
 			// You need to implement this code, see the TMA infomation for an explanation
 			// of the fucntionality required.
 			
@@ -326,7 +342,7 @@ var app = {
 			// Hint: if you cant work out how to use the API here, hard code a call to addMarkerToMap as
 			//       as below. Then you can attempt FR2.2
 			
-			addMarkerToMap("Milton Keynes Central");
+			//addMarkerToMap("Milton Keynes Central");
 		}
 
 		/**
@@ -338,6 +354,7 @@ var app = {
 			var onSuccess = function(data){
 				var obj = $.parseJSON(data);
 				if (obj.status == "success") {
+					console.log(obj.data[0]);
 					alert("User " + oucu + " has been successfully registered.");
 				} else {
 					alert("User " + oucu + " is already registered.");
@@ -365,7 +382,7 @@ var app = {
 			var onSuccess = function(data){
 				var obj = $.parseJSON(data);
 					if (obj.status == "success"){
-						alert("you offered to share a taxi from \n" 
+						alert("Your offer to share a taxi from \n" 
 							+ address + " has been registered \n" + 
 							"the offer starts from " + start_time +
 							"and expires at:" + end_time)
@@ -382,6 +399,22 @@ var app = {
 			// TODO 2(a) FR1.3
 			// You need to implement this code, see the TMA infomation for an explanation
 			// of the fucntionality required.
+
+			var uri = "http://137.108.92.9/openstack/taxi/orders"; 
+			var valueZero = 1; // used to select type : 1 
+			var params = {OUCU: oucu, start: start_time, type : valueZero , address : address};
+			
+			var onSuccess = function(data){
+				var obj = $.parseJSON(data);
+				if (obj.status == "success"){
+						alert("Your request to share a taxi from \n" 
+							+ address + " has been registered \n" + 
+							"time of request " + start_time	)
+						
+					} 
+				 }
+			$.post(uri, params , onSuccess );
+
 		};
 
 		/**
@@ -438,9 +471,9 @@ var app = {
 				// 2(a) FR3
 				// This is implemented for you and no further work is needed on it.
 				
-				if (timerId) clearInterval(timerId);
+		//		if (timerId) clearInterval(timerId);
 				// every 10 seconds update the map with the current matches.
-				timerId = setInterval(updateMatchingStatus, 10000); 
+		//		timerId = setInterval(updateMatchingStatus, 10000); 
 				// update the map now too
 				updateMatchingStatus();
 			}
@@ -507,6 +540,8 @@ var app = {
 			taxiShareObject.cancel = function (){
 				//TODO adjust the following to get the required data from your HTML page.
 				var oucu = get_name_value("name", "user1");
+				if (oucu == "" || oucu == "user1") return alert("OUCU has not been selected");
+
 				cancel(oucu);
 			}
 

@@ -31,7 +31,7 @@
 			TODO: add text and form entry methods to capture relevant details
 		-->
 			<label for="name">Insert your <strong>OUCU</strong></label>
-			<input type="text" id="name" name="name" required minlength="4" maxlength="8" value="sc9668" placeholder="e.g. ABC123" size="10"> 
+			<input type="text" id="name" name="name" required minlength="4" maxlength="8" placeholder="e.g. ABC123" size="10"> 
 			<br /><hr />
 			<label for="time" >Select starting date and start time</label>	
 			<input type="datetime-local" id="time" name="time" required> <br /><!-- changed ID and added required FR1.2 -->
@@ -59,8 +59,8 @@
 		<label for="register"><strong>New user</strong></label>
 	<button id="register" onclick="app.taxiShare.registerUser()">Register OUCU</button><hr /> <!-- added onclick that points to register user function -->
 		<strong>Your trip</strong>
-		<button onclick="app.taxiShare.volunteerTaxi()">offer to share</button> <button>request to share</button><button>update map</button>
-		<button>cancel request or offers</button><button>set map offline</button>
+		<button onclick="app.taxiShare.volunteerTaxi()">offer to share</button> <button onclick="app.taxiShare.requestTaxi()">request to share</button><button onclick="app.taxiShare.beginUpdatingMap()">update map</button>
+		<button onclick="app.taxiShare.cancel()">cancel request or offers</button><button onclick="app.taxiShare.stopUpdatingMap()">set map offline</button>
 
 		</div>
 		<!---
