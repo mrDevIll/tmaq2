@@ -347,8 +347,7 @@ var app = {
 			// Post the user ID using the "users" API
 			var uri = "http://137.108.92.9/openstack/taxi/users"; 
 			var params = { OUCU: oucu };
-			if (oucu != "")
-				$.post(uri,params,onSuccess);
+			$.post(uri,params,onSuccess);
 		};
 
 		/**
@@ -358,17 +357,22 @@ var app = {
 			// TODO 2(a) FR1.2
 			// You need to implement this code, see the TMA infomation for an explanation
 			// of the fucntionality required.
+			
 			var uri = "http://137.108.92.9/openstack/taxi/orders"; 
 			var valueZero = 0; // used to select type : 0 
-			var propsApi = {OUCU: oucu, "start": start_time, type : valueZero , address : address, "end": end_time};
-		  	console.log(propsApi);
-			//$.post(uri, propsApi , getOrderId );
-			//alert(`uri: ${uri}, oucu: ${oucu}, type: ${type}, addr ${address}, start: ${start_time}`);
+			var params = {OUCU: oucu, start: start_time, type : valueZero , address : address, end: end_time};
 			
-			var getOrderId = function(data){
-							var result = data;
-							return alert(result);
-			}
+			var onSuccess = function(data){
+				var obj = $.parseJSON(data);
+					if (obj.status == "success"){
+						alert("you offered to share a taxi from \n" 
+							+ address + " has been registered \n" + 
+							"the offer starts from " + start_time +
+							"and expires at:" + end_time)
+						
+					} 
+				 }
+			$.post(uri, params , onSuccess );
 		}
 		
 		/**
@@ -424,7 +428,7 @@ var app = {
 		// TODO: Update code to the names of your user interface elements in the HTML, or otherwise 
 		//       change the code here to reflect the design of your HTML.
 		function TaxiShare(){
-		
+					
 			// These varibles are private
 			var taxiShareObject = {};
 			var timerId = null;
@@ -452,7 +456,10 @@ var app = {
 				//TODO adjust the following to get the OUCU from your HTML page.
 				//this function will be called once the user clicks on "register OUCU"
 				var oucu = get_name_value("name", "user1");  
-				console.log("oucu:" + oucu);
+
+				//notifies user about wrong value in oucu field
+				if (oucu == "" || oucu == "user1") return alert("OUCU has not been selected");
+
 				register(oucu);
 			}
 			
@@ -460,24 +467,29 @@ var app = {
 			taxiShareObject.volunteerTaxi = function (){
 				//TODO adjust the following to get the required data from your HTML page.
 				
-				//this function takes the value from an element
-				// var getElementFromDOM = function(id){
-				// 	var el = document.getElementById(id);
-				// 	return el.value.toString();
-				// }
-
 				var oucu = get_name_value("name", "user1");
+				
+				//notifies user about wrong value in oucu field
+				if (oucu == "" || oucu == "user1") return alert("OUCU is not valid or has not been selected");
+				
 				var address = get_name_value("addr", "Open University"); 
-				var start_time = get_name_value("time", format(new Date())).replace("T", " ").concat(":00"); // adds seconds exchanges T for space
-				var hours = get_name_value("hours", 1); //duration in hours
+				
+				//I modified the former format function used for default value raw 145 
+				//and added .replace and .concact so that the date format is always YYYY-MM-DD HH:MM:00
+				var start_time = get_name_value("time", format(new Date())).replace("T", " ").concat(":00"); 
+				
+				//duration in hours
 				// The API requires an end time, but the interface allows for duration.
 				// This code turns the duration into an end time.
+				var hours = get_name_value("hours", 1); 
+				
+				
 				var d = new Date();
 				d.setHours(d.getHours() + hours);
 				
-				var end_time = format(d).concat(":00");
 				//end time returns the default value of start time return a not compatible date format e.g. YYYY:MM:YY:HH:MM 
-				//I modified raw 145 and ad replace and concact so that the date format is YYYY-MM-DD HH:MM:00
+				//I modified raw 145 and added .concact so that the date format is always YYYY-MM-DD HH:MM:00
+				var end_time = format(d).concat(":00");
 				
 				volunteer(oucu, address, start_time, end_time);
 			}
@@ -503,7 +515,7 @@ var app = {
 		}
 		
 		// update the HERE  map initially
-		intialiseMap();
+		//intialiseMap();
 		 
 		//Create the TaxiShare object, visible in the HTML file as app.taxiShare
 		this.taxiShare = new TaxiShare();

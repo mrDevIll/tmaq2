@@ -31,12 +31,12 @@
 			TODO: add text and form entry methods to capture relevant details
 		-->
 			<label for="name">Insert your <strong>OUCU</strong></label>
-			<input type="text" id="name" name="name" required minlength="4" maxlength="8" placeholder="e.g. ABC123" size="10"> 
+			<input type="text" id="name" name="name" required minlength="4" maxlength="8" value="sc9668" placeholder="e.g. ABC123" size="10"> 
 			<br /><hr />
 			<label for="time" >Select starting date and start time</label>	
 			<input type="datetime-local" id="time" name="time" required> <br /><!-- changed ID and added required FR1.2 -->
 			<br/>
-			<input type="number" name="hours" id="hours" /><!-- modified the imput type -->
+			<input type="number" name="hours" id="hours" min="1" max="24"  /><!-- modified the imput type -->
 			<label for="hours">Waiting time in hours max 24h. e.g. </label>
 			<hr />
 			
