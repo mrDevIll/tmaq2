@@ -206,32 +206,37 @@ var app = {
 	receivedEvent: function(id) {
 		
 		/* The following are private varibles only visible in this scope */
-
 		var markers = []; //used to store markers on the map
 		var map; // used to reference the HERE map
+		var coords = [];
 		
 		/* The following are private functions only visible in this scope */
 		
 		function addMarkerToMap(address){
-			if (address != undefined) {
-				// TODO 2(a) FR2.2
-				let mkAddr ={
-					"place_id": 236938815,
-					"licence": "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
-					"boundingbox": [
-						"52.025307451225",
-						"52.025407451225",
-						"-0.70910266286612",
-						"-0.70900266286612"
-					],
-					"lat": "52.02535745122509",
-					"lon": "-0.7090526628661223",
-					"display_name": "Walton, Bow Brickhill, Milton Keynes, South East, England, MK7 6AA, United Kingdom",
-					"class": "place",
-					"type": "postcode",
-					"importance": 0.325
-				}
-				if (address=="Milton Keynes Central") markers.push({coords:{"lat": mkAddr.lat, "lon": mkAddr.lon}})
+			// TODO 2(a) FR2.2
+			 
+			var uri ="https://nominatim.openstreetmap.org/search/";
+			var countrycodes= "gb";
+			var mk = "MK9 1EN";
+			var json = "json";
+			var marker;
+			var i=0;
+			var params = {format: json, countrycodes:countrycodes};
+			
+			var onSuccess = function (data){
+				var obj = data[0];
+				console.log(obj);
+			}
+						
+			$.get(uri + mk, params, onSuccess)			
+			// var coord = {lat: api.lat, lng: api.lon};
+			// marker = new H.map.Marker(coord);
+			// map.setCenter(coord);
+			// map.addObject(marker);
+			// markers.push(coord);
+
+				
+
 				// You need to implement this code, see the TMA infomation for an explanation
 				// of the fucntionality required.
 				
@@ -241,7 +246,7 @@ var app = {
 				// to store a marker you create to later delete it use:
 				// markers.push(marker);
 				// to add it to the markers array
-			}
+			
 		}
 		
 		// Call to clear any markers you have added to the markers array.
@@ -317,21 +322,47 @@ var app = {
 			// TODO 2(a) FR2.1
 			var uri = "http://137.108.92.9/openstack/taxi/matches";
 			//we clear the map from the old markers
-			clearMarkersFromMap()
+			// This is called when the position is found
+            var onSuccess = function(position) {                
+              };
+             // This is called if there is an error finding the position
+            var onError = function(error) {
+                  alert("code: " + error.code + "\n" + "message: " + error.message + "\n");
+            }
+              // This attempts to get the location of the device.
+              navigator.geolocation.getCurrentPosition(onSuccess, onError, {
+                  enableHighAccuracy: true
+            });
 
-			var onSuccess = function(data){
-				var obj = $.parseJSON(data);
-				if(obj.status == "success")
-				alert(obj.data[0])	
-			}
 
-			//we get the oucu and check if is valid
-			var oucu = get_name_value("name", "user1"); //TODO adjust to get the OUCU from your HTML page.
-			if (oucu == "" || oucu == "user1") return alert("OUCU has not been selected");
+
+			//clearMarkersFromMap()
 			
-			var params = { OUCU: oucu } 
-			//we call the API to check orders and offers
-			$.get(uri, params, onSuccess );
+			// var onSuccess = function(data){				
+			// 	var obj = $.parseJSON(data);
+			// 	var test = document.getElementById("test");
+			// 	var text = function(x){ return document.createTextNode(x)};
+				
+			// 	var stream = (api)=> {
+			// 		var i = 0;
+			// 		var arr = api.data;
+			// 		for (i; i<arr.length; i++){
+			// 			test.appendChild(text(arr[i].offer_address));	}
+					
+			// 		console.log(arr);
+			// 	};
+			// 	stream(obj)  
+
+					
+			// }
+
+			// //we get the oucu and check if is valid
+			// var oucu = get_name_value("name", "user1"); //TODO adjust to get the OUCU from your HTML page.
+			// if (oucu == "" || oucu == "user1") return alert("OUCU has not been selected");
+			
+			// var params = { OUCU: oucu } 
+			// //we call the API to check orders and offers
+			// $.get(uri, params, onSuccess );
 
 			// You need to implement this code, see the TMA infomation for an explanation
 			// of the fucntionality required.
@@ -342,7 +373,7 @@ var app = {
 			// Hint: if you cant work out how to use the API here, hard code a call to addMarkerToMap as
 			//       as below. Then you can attempt FR2.2
 			
-			//addMarkerToMap("Milton Keynes Central");
+			addMarkerToMap("Milton Keynes Central");
 		}
 
 		/**
@@ -550,7 +581,7 @@ var app = {
 		}
 		
 		// update the HERE  map initially
-		//intialiseMap();
+		// intialiseMap();
 		 
 		//Create the TaxiShare object, visible in the HTML file as app.taxiShare
 		this.taxiShare = new TaxiShare();

@@ -6,7 +6,7 @@
  * minor changes related to your HTML design decisions. 
  *
  * File created by Chris Thomson 11/10/2019 
- * File modified and submitted by: (your name here)
+ * File modified and submitted by: (Simone Calcagno, sc9668)
  ************/
 
 /**
@@ -142,7 +142,7 @@ function formatDate(date, format, utc) {
  * @returns formatted Date string
  */
 function format(d) {
-  return formatDate(d, "yyyy:MM:dd:HH:mm");
+  return formatDate(d, "yyyy-MM-dd HH:mm"); //modified to comply with API insertion
 }
 
 /**
@@ -206,16 +206,42 @@ var app = {
 	receivedEvent: function(id) {
 		
 		/* The following are private varibles only visible in this scope */
-
 		var markers = []; //used to store markers on the map
 		var map; // used to reference the HERE map
+		var coords = [];
 		
 		/* The following are private functions only visible in this scope */
 		
 		function addMarkerToMap(address){
-			if (address != undefined) {
-				// TODO 2(a) FR2.2
+			var countrycode= "gb";
+			var OU = "Open University";
+			var mk = "Milton Keynes Central";
+			
+			// TODO 2(a) FR2.2
+			console.log(address);
+			var OUAddr ={
+				"place_id": 236938815,
+				"licence": "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
+				"boundingbox": [
+					"52.025307451225",
+					"52.025407451225",
+					"-0.70910266286612",
+					"-0.70900266286612"
+				],
+				"lat": "52.02535745122509",
+				"lon": "-0.7090526628661223",
+				"display_name": "Walton, Bow Brickhill, Milton Keynes, South East, England, MK7 6AA, United Kingdom",
+				"class": "place",
+				"type": "postcode",
+				"importance": 0.325
+			};
+				var position = function (lat,lon) {return {lat: lat, lng:lon}};
 				
+				//markers.push({ OUAddr.lat, OUAddr.lon});
+				marker = new H.map.Marker(OUAddr.lat, OUAddr.lon);
+				map.addObject(marker);
+
+
 				// You need to implement this code, see the TMA infomation for an explanation
 				// of the fucntionality required.
 				
@@ -225,7 +251,7 @@ var app = {
 				// to store a marker you create to later delete it use:
 				// markers.push(marker);
 				// to add it to the markers array
-			}
+			
 		}
 		
 		// Call to clear any markers you have added to the markers array.
@@ -240,8 +266,8 @@ var app = {
 		function intialiseMap(){
 			// initialize the platform object:
 			var platform = new H.service.Platform({
-				app_id: "APP_ID", 	  // TODO: Change to your own APP_ID
-				app_code: "APP_CODE"  // TODO: Change to your own APP_CODE
+				app_id: "e2qq5RWEZXJplcqxyFUK", 	  // TODO: Change to your own APP_ID
+				app_code: "eWU8b7J1IC-9-GWLlod2ow"  // TODO: Change to your own APP_CODE
 			});
 			// obtain the default map types from the platform object
 			var defaultLayers = platform.createDefaultLayers();
@@ -299,8 +325,36 @@ var app = {
 		 */
 		function updateMatchingStatus(address) {
 			// TODO 2(a) FR2.1
-			var oucu = get_name_value("name", "user1"); //TODO adjust to get the OUCU from your HTML page.
+			var uri = "http://137.108.92.9/openstack/taxi/matches";
+			//we clear the map from the old markers
+			clearMarkersFromMap()
 			
+			// var onSuccess = function(data){				
+			// 	var obj = $.parseJSON(data);
+			// 	var test = document.getElementById("test");
+			// 	var text = function(x){ return document.createTextNode(x)};
+				
+			// 	var stream = (api)=> {
+			// 		var i = 0;
+			// 		var arr = api.data;
+			// 		for (i; i<arr.length; i++){
+			// 			test.appendChild(text(arr[i].offer_address));	}
+					
+			// 		console.log(arr);
+			// 	};
+			// 	stream(obj)  
+
+					
+			// }
+
+			// //we get the oucu and check if is valid
+			// var oucu = get_name_value("name", "user1"); //TODO adjust to get the OUCU from your HTML page.
+			// if (oucu == "" || oucu == "user1") return alert("OUCU has not been selected");
+			
+			// var params = { OUCU: oucu } 
+			// //we call the API to check orders and offers
+			// $.get(uri, params, onSuccess );
+
 			// You need to implement this code, see the TMA infomation for an explanation
 			// of the fucntionality required.
 			
@@ -322,6 +376,7 @@ var app = {
 			var onSuccess = function(data){
 				var obj = $.parseJSON(data);
 				if (obj.status == "success") {
+					console.log(obj.data[0]);
 					alert("User " + oucu + " has been successfully registered.");
 				} else {
 					alert("User " + oucu + " is already registered.");
@@ -329,10 +384,9 @@ var app = {
 			}
 			
 			// Post the user ID using the "users" API
-			var uri = "http://137.108.92.9/openstack/taxi/users";
+			var uri = "http://137.108.92.9/openstack/taxi/users"; 
 			var params = { OUCU: oucu };
-			if (oucu != "")
-				$.post(uri,params,onSuccess);
+			$.post(uri,params,onSuccess);
 		};
 
 		/**
@@ -342,6 +396,22 @@ var app = {
 			// TODO 2(a) FR1.2
 			// You need to implement this code, see the TMA infomation for an explanation
 			// of the fucntionality required.
+			
+			var uri = "http://137.108.92.9/openstack/taxi/orders"; 
+			var valueZero = 0; // used to select type : 0 
+			var params = {OUCU: oucu, start: start_time, type : valueZero , address : address, end: end_time};
+			
+			var onSuccess = function(data){
+				var obj = $.parseJSON(data);
+					if (obj.status == "success"){
+						alert("Your offer to share a taxi from \n" 
+							+ address + " has been registered \n" + 
+							"the offer starts from " + start_time +
+							"and expires at:" + end_time)
+						
+					} 
+				 }
+			$.post(uri, params , onSuccess );
 		}
 		
 		/**
@@ -351,6 +421,22 @@ var app = {
 			// TODO 2(a) FR1.3
 			// You need to implement this code, see the TMA infomation for an explanation
 			// of the fucntionality required.
+
+			var uri = "http://137.108.92.9/openstack/taxi/orders"; 
+			var valueZero = 1; // used to select type : 1 
+			var params = {OUCU: oucu, start: start_time, type : valueZero , address : address};
+			
+			var onSuccess = function(data){
+				var obj = $.parseJSON(data);
+				if (obj.status == "success"){
+						alert("Your request to share a taxi from \n" 
+							+ address + " has been registered \n" + 
+							"time of request " + start_time	)
+						
+					} 
+				 }
+			$.post(uri, params , onSuccess );
+
 		};
 
 		/**
@@ -397,7 +483,7 @@ var app = {
 		// TODO: Update code to the names of your user interface elements in the HTML, or otherwise 
 		//       change the code here to reflect the design of your HTML.
 		function TaxiShare(){
-		
+					
 			// These varibles are private
 			var taxiShareObject = {};
 			var timerId = null;
@@ -407,9 +493,9 @@ var app = {
 				// 2(a) FR3
 				// This is implemented for you and no further work is needed on it.
 				
-				if (timerId) clearInterval(timerId);
+		//		if (timerId) clearInterval(timerId);
 				// every 10 seconds update the map with the current matches.
-				timerId = setInterval(updateMatchingStatus, 10000); 
+		//		timerId = setInterval(updateMatchingStatus, 10000); 
 				// update the map now too
 				updateMatchingStatus();
 			}
@@ -421,28 +507,46 @@ var app = {
 				clearInterval(timerId);
 			}
 			
-			//Register a user with the web service
 			taxiShareObject.registerUser = function (){
 				//TODO adjust the following to get the OUCU from your HTML page.
-				var oucu = get_name_value("name", "user1");
+				//this function will be called once the user clicks on "register OUCU"
+				var oucu = get_name_value("name", "user1");  
+
+				//notifies user about wrong value in oucu field
+				if (oucu == "" || oucu == "user1") return alert("OUCU has not been selected");
+
 				register(oucu);
 			}
 			
 			//Indicate that the user wants to volunteer to share their taxi
 			taxiShareObject.volunteerTaxi = function (){
 				//TODO adjust the following to get the required data from your HTML page.
-				var oucu = get_name_value("name", "user1");
-				var address = get_name_value("addr", "Open University"); 
-				var start_time = get_name_value("time", format(new Date()));
-				var hours = get_name_value("hours", 1); //duration in hours
 				
+				var oucu = get_name_value("name", "user1");
+				
+				//notifies user about wrong value in oucu field
+				if (oucu == "" || oucu == "user1") return alert("OUCU is not valid or has not been selected");
+				
+				var address = get_name_value("addr", "Open University"); 
+				
+				//I modified the former format function used for default value raw 145 
+				//and added .replace and .concact so that the date format is always YYYY-MM-DD HH:MM:00
+				var start_time = get_name_value("time", format(new Date())).replace("T", " ").concat(":00"); 
+				
+				//duration in hours
 				// The API requires an end time, but the interface allows for duration.
 				// This code turns the duration into an end time.
+				var hours = get_name_value("hours", 1); 
+				
+				
 				var d = new Date();
 				d.setHours(d.getHours() + hours);
-				var end_time = format(d);
 				
-				volunteer(oucu,address,start_time,end_time);
+				//end time returns the default value of start time return a not compatible date format e.g. YYYY:MM:YY:HH:MM 
+				//I modified raw 145 and added .concact so that the date format is always YYYY-MM-DD HH:MM:00
+				var end_time = format(d).concat(":00");
+				
+				volunteer(oucu, address, start_time, end_time);
 			}
 			
 			//Indicate that the user wants to share a taxi somebody else has booked.
@@ -458,6 +562,8 @@ var app = {
 			taxiShareObject.cancel = function (){
 				//TODO adjust the following to get the required data from your HTML page.
 				var oucu = get_name_value("name", "user1");
+				if (oucu == "" || oucu == "user1") return alert("OUCU has not been selected");
+
 				cancel(oucu);
 			}
 
