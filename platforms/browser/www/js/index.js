@@ -343,24 +343,23 @@ var app = {
 			//function called in case of a successfull API response
 			var onSuccess = function(data){				
 				var obj = $.parseJSON(data);				
-				showData(obj.data)("start")(console.log);
+				//showData(obj.data, console.log);
+				showData(obj.data ,checkElements);
 			}
 
-			var showData= (data)=>
-				tag => 
-					func =>
-						{	
-							var test = document.getElementById("test");
-							var text = function(x){ return document.createTextNode(x)};
+			function showData(data, func){
+						
 							var i = 0;
-								for (i; i<data.length; i++){
-									test.appendChild( text(" " + data[i][tag] + " || \n" ) );
-							}
-					
-							return func(data);
-						};
+							for (i; i<data.length; i++){
+								func(data[i]);
+								}
+							
+			}		
+			
 				
-
+			var checkElements = (data)=> console.log(data["hire_oucu"]);
+					
+											
 
 			//we get the oucu and check if is valid
 			var oucu = get_name_value("name", "user1"); //TODO adjust to get the OUCU from your HTML page.
