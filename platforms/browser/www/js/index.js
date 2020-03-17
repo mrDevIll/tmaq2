@@ -208,32 +208,37 @@ var app = {
 		/* The following are private varibles only visible in this scope */
 		var markers = []; //used to store markers on the map
 		var map; // used to reference the HERE map
-		var coords = [];
+		var addMarkersAddress = [];
 		
 		/* The following are private functions only visible in this scope */
 		
 		function addMarkerToMap(address){
 			// TODO 2(a) FR2.2
-			 
+			var address = address || "MK9 1EN"; 
 			var uri ="https://nominatim.openstreetmap.org/search/";
 			var countrycodes= "gb";
 			var mk = "MK9 1EN";
 			var json = "json";
 			var marker;
+			var coord = {};//stores the coordinates to push in marker and markers 
 			var i=0;
 			var params = {format: json, countrycodes:countrycodes};
 			
 			var onSuccess = function (data){
 				var obj = data[0];
 				console.log(obj);
+				var coord = {lat: obj.lat, lng: obj.lon};
+				marker = new H.map.Marker(coord);
+				map.setCenter(coord);
+				map.addObject(marker);
+				//markers.push(marker);
+				
 			}
 						
-			$.get(uri + mk, params, onSuccess)			
-			// var coord = {lat: api.lat, lng: api.lon};
-			// marker = new H.map.Marker(coord);
-			// map.setCenter(coord);
-			// map.addObject(marker);
-			// markers.push(coord);
+			$.get(uri + address, params, onSuccess)
+				.fail(function(){
+					alert("there was an issue with the internet connetion, please retry later")
+				})			
 
 				
 
@@ -320,50 +325,6 @@ var app = {
 		 */
 		function updateMatchingStatus(address) {
 			// TODO 2(a) FR2.1
-			var uri = "http://137.108.92.9/openstack/taxi/matches";
-			//we clear the map from the old markers
-			// This is called when the position is found
-            var onSuccess = function(position) {                
-              };
-             // This is called if there is an error finding the position
-            var onError = function(error) {
-                  alert("code: " + error.code + "\n" + "message: " + error.message + "\n");
-            }
-              // This attempts to get the location of the device.
-              navigator.geolocation.getCurrentPosition(onSuccess, onError, {
-                  enableHighAccuracy: true
-            });
-
-
-
-			//clearMarkersFromMap()
-			
-			// var onSuccess = function(data){				
-			// 	var obj = $.parseJSON(data);
-			// 	var test = document.getElementById("test");
-			// 	var text = function(x){ return document.createTextNode(x)};
-				
-			// 	var stream = (api)=> {
-			// 		var i = 0;
-			// 		var arr = api.data;
-			// 		for (i; i<arr.length; i++){
-			// 			test.appendChild(text(arr[i].offer_address));	}
-					
-			// 		console.log(arr);
-			// 	};
-			// 	stream(obj)  
-
-					
-			// }
-
-			// //we get the oucu and check if is valid
-			// var oucu = get_name_value("name", "user1"); //TODO adjust to get the OUCU from your HTML page.
-			// if (oucu == "" || oucu == "user1") return alert("OUCU has not been selected");
-			
-			// var params = { OUCU: oucu } 
-			// //we call the API to check orders and offers
-			// $.get(uri, params, onSuccess );
-
 			// You need to implement this code, see the TMA infomation for an explanation
 			// of the fucntionality required.
 			
@@ -372,8 +333,47 @@ var app = {
 			
 			// Hint: if you cant work out how to use the API here, hard code a call to addMarkerToMap as
 			//       as below. Then you can attempt FR2.2
+
+			var uri = "http://137.108.92.9/openstack/taxi/matches";//uri API to match taxi 
 			
-			addMarkerToMap("Milton Keynes Central");
+			//we clear the map from the old markers
+			clearMarkersFromMap()
+			var responseFromApi;
+			
+			//function called in case of a successfull API response
+			var onSuccess = function(data){				
+				var obj = $.parseJSON(data);				
+				showData(obj.data)("start")(console.log);
+			}
+
+			var showData= (data)=>
+				tag => 
+					func =>
+						{	
+							var test = document.getElementById("test");
+							var text = function(x){ return document.createTextNode(x)};
+							var i = 0;
+								for (i; i<data.length; i++){
+									test.appendChild( text(" " + data[i][tag] + " || \n" ) );
+							}
+					
+							return func(data);
+						};
+				
+
+
+			//we get the oucu and check if is valid
+			var oucu = get_name_value("name", "user1"); //TODO adjust to get the OUCU from your HTML page.
+			if (oucu == "" || oucu == "user1") return alert("OUCU has not been selected");
+			var params = { OUCU: oucu } 
+
+			//we call the API to check orders and offers
+			$.get(uri, params, onSuccess )
+				.fail(function(){alert("there is an error connecting the database please refer " + error + "to the taxi share app staff")});
+			
+			
+			//clearMarkersFromMap()
+			//addMarkerToMap(address);
 		}
 
 		/**
@@ -581,7 +581,7 @@ var app = {
 		}
 		
 		// update the HERE  map initially
-		// intialiseMap();
+		intialiseMap();
 		 
 		//Create the TaxiShare object, visible in the HTML file as app.taxiShare
 		this.taxiShare = new TaxiShare();
